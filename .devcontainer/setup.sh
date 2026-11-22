@@ -21,7 +21,10 @@ export PATH="$HOME/.local/bin:$PATH"
 git remote get-url upstream >/dev/null 2>&1 || git remote add upstream https://github.com/ScrollPrize/villa.git
 
 cd vesuvius
-uv sync --extra all
+# Build the C++ packages one at a time with 3 compile jobs: building them all in
+# parallel on a 4-core / 16 GB codespace got its compilers terminated.
+export UV_CONCURRENT_BUILDS=1 CMAKE_BUILD_PARALLEL_LEVEL=3
+uv sync --frozen --extra all
 echo "[setup] $(date) done."
 echo "[setup] Run tests:  cd vesuvius && uv run --no-sync pytest tests -m 'not slow and not network'"
 echo "[setup] New fix:    git fetch upstream && git switch -c my-fix upstream/main"
