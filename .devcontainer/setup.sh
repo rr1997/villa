@@ -25,6 +25,9 @@ cd vesuvius
 # parallel on a 4-core / 16 GB codespace got its compilers terminated.
 export UV_CONCURRENT_BUILDS=1 CMAKE_BUILD_PARALLEL_LEVEL=3
 uv sync --frozen --extra all
+# CI (test-vesuvius.yml) re-locks and then installs a pinned zarr, which brings in
+# numcodecs. The committed uv.lock lacks pynrrd and numcodecs, so add them the same way.
+uv pip install "zarr==3.2.1" pynrrd
 echo "[setup] $(date) done."
-echo "[setup] Run tests:  cd vesuvius && uv run --no-sync pytest tests -m 'not slow and not network'"
+echo "[setup] Run tests:  cd vesuvius && PYTHONPATH=/workspaces/villa uv run --no-sync pytest tests -m 'not slow and not network'"
 echo "[setup] New fix:    git fetch upstream && git switch -c my-fix upstream/main"
